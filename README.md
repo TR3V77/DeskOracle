@@ -1,11 +1,10 @@
-# Danny
+# DeskOracle
 
 An AI-assisted IT helpdesk ticket triage system: submit a plain-English
 ticket description, and it retrieves relevant internal knowledge-base
 articles (RAG), predicts a category and priority, and drafts a suggested
-response. Built as a self-contained project spanning software engineering,
-data analytics, and product/UX — the three areas covered by Dell's IT
-Development Program rotations.
+response. Built as a self-contained project spanning three disciplines:
+software engineering, data analytics, and product/UX design.
 
 ## Why this project
 
@@ -19,7 +18,7 @@ whether the automation actually works.
 
 | Area | What it shows |
 |---|---|
-| **Software Engineering** | FastAPI backend, RAG pipeline (TF-IDF retrieval over a markdown knowledge base), LLM agent integration (Claude) with a rule-based offline fallback so the app always runs, 16 passing pytest tests |
+| **Software Engineering** | FastAPI backend, RAG pipeline (TF-IDF retrieval over a markdown knowledge base), LLM agent integration (Claude) with a rule-based offline fallback so the app always runs, 19 passing pytest tests (including mocked LLM-path coverage) |
 | **Data Analytics** | A synthetic-but-realistic 2,900-ticket dataset, a classifier evaluation (98% accuracy, per-category precision/recall/F1, confusion matrix), and a 4-panel operational dashboard (volume trends, resolution time by category, weekday spikes, category mix) |
 | **Product Design** | A Streamlit UI so the triage agent is actually usable, not just an API |
 
@@ -51,6 +50,10 @@ Ticket description
   a bug — the kind of gap you'd catch in a precision/recall review before shipping.
 - **Monday ticket volume is 93% higher** than the weekday average, consistent with
   VPN/network reconnect issues after the weekend — an actionable staffing signal.
+
+![Operational dashboard: daily ticket volume, average resolution time by category, ticket volume by weekday, and category mix](analytics/dashboard.png)
+
+![Confusion matrix for the rule-based classifier evaluation](analytics/confusion_matrix.png)
 
 ## Running it
 

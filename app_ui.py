@@ -1,5 +1,5 @@
 """
-Streamlit demo UI for Danny -- submit a ticket description and see the
+Streamlit demo UI for DeskOracle -- submit a ticket description and see the
 AI triage suggestion live. Calls the triage engine directly (no need to
 run the FastAPI server separately for this demo).
 
@@ -9,9 +9,9 @@ import streamlit as st
 
 from backend.triage import triage
 
-st.set_page_config(page_title="Danny", page_icon="🎫", layout="centered")
+st.set_page_config(page_title="DeskOracle", page_icon="🎫", layout="centered")
 
-st.title("🎫 Danny")
+st.title("🎫 DeskOracle")
 st.caption("AI-assisted IT helpdesk ticket triage (RAG + LLM agent, with offline fallback)")
 
 with st.form("ticket_form"):
@@ -47,7 +47,7 @@ if submitted:
 
 st.divider()
 st.caption(
-    "Built for Dell ITDP -- demonstrates a RAG-backed triage agent (Software), "
-    "a synthetic ticket dataset with classifier evaluation (Data Analytics), "
-    "and this UI (Product Design)."
+    "Demonstrates a RAG-backed triage agent (Software), a synthetic ticket "
+    "dataset with classifier evaluation (Data Analytics), and this UI "
+    "(Product Design)."
 )
