@@ -56,6 +56,3 @@ class KnowledgeBase:
         scores = cosine_similarity(query_vec, self._matrix)[0]
         ranked = sorted(zip(self.articles, scores), key=lambda pair: pair[1], reverse=True)
         return [pair for pair in ranked[:top_k] if pair[1] > 0]
-
-    def categories(self) -> list[str]:
-        return sorted({a.category for a in self.articles})

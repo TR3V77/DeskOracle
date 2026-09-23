@@ -40,3 +40,4 @@ def test_triage_end_to_end_returns_fallback_mode():
     assert response.predicted_category == "Network_VPN"
     assert len(response.kb_matches) > 0
     assert response.suggested_response
+    assert response.kb_matches[0].body.strip()

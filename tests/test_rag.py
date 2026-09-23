@@ -1,4 +1,16 @@
+import pytest
+
 from backend.rag import KnowledgeBase
+
+
+def test_kb_rejects_article_with_unknown_category(tmp_path):
+    bad_article = tmp_path / "bad.md"
+    bad_article.write_text(
+        "# Some Issue\n\nCategory: Not_A_Real_Category\n\nBody text.\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="Not_A_Real_Category"):
+        KnowledgeBase(kb_dir=tmp_path)
 
 
 def test_kb_loads_articles():
