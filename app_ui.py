@@ -31,8 +31,10 @@ st.divider()
 
 if "description" not in st.session_state:
     st.session_state.description = ""
+if "auto_submit" not in st.session_state:
+    st.session_state.auto_submit = False
 
-st.markdown("**Try an example, or describe your own issue below:**")
+st.markdown("**Click an example to see it triaged instantly, or describe your own issue below:**")
 examples = {
     "🔌 VPN dropping": "My VPN keeps disconnecting every few minutes and I can't reconnect",
     "🔒 Locked out": "I forgot my password and I'm locked out of my account",
@@ -43,6 +45,7 @@ example_cols = st.columns(4)
 for col, (label, text) in zip(example_cols, examples.items()):
     if col.button(label, use_container_width=True):
         st.session_state.description = text
+        st.session_state.auto_submit = True
 
 with st.container(border=True):
     description = st.text_area(
@@ -53,7 +56,8 @@ with st.container(border=True):
     )
     submitted = st.button("Triage Ticket", type="primary")
 
-if submitted:
+if submitted or st.session_state.auto_submit:
+    st.session_state.auto_submit = False
     if len(description.strip()) < 5:
         st.error("Please enter a longer description.")
     else:
@@ -90,6 +94,8 @@ if submitted:
                 mcol1, mcol2 = st.columns([3, 1])
                 mcol1.markdown(f"**{match.title}**  \n*{match.category.replace('_', ' / ')}*")
                 mcol2.progress(min(match.score, 1.0), text=f"{match.score:.2f}")
+                with st.expander("View article / resolution steps"):
+                    st.markdown(match.body)
 
 st.divider()
 st.caption(

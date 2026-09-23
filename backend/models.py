@@ -9,6 +9,7 @@ class KBMatch(BaseModel):
     title: str
     category: str
     score: float
+    body: str
 
 
 class TriageResponse(BaseModel):

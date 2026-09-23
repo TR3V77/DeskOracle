@@ -143,7 +143,7 @@ Respond with ONLY a JSON object with these exact keys:
 def triage(description: str) -> TriageResponse:
     kb_matches = _kb.search(description, top_k=3)
     kb_match_models = [
-        KBMatch(title=a.title, category=a.category, score=round(float(s), 3))
+        KBMatch(title=a.title, category=a.category, score=round(float(s), 3), body=a.body)
         for a, s in kb_matches
     ]
 
