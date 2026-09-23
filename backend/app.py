@@ -1,21 +1,27 @@
 """
-FastAPI backend for Danny.
+FastAPI backend for DeskOracle.
 
 Run: uvicorn backend.app:app --reload
 Docs: http://127.0.0.1:8000/docs
 """
-from fastapi import FastAPI
+import logging
+
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.models import TriageRequest, TriageResponse
 from backend.triage import triage
 
+logger = logging.getLogger(__name__)
+
 app = FastAPI(
-    title="Danny",
+    title="DeskOracle",
     description="AI-assisted IT helpdesk ticket triage with RAG-backed suggestions.",
     version="0.1.0",
 )
 
+# Wide open for local/demo use. Scope allow_origins to a real allowlist
+# before deploying this behind a public URL.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -31,4 +37,8 @@ def health() -> dict:
 
 @app.post("/tickets/triage", response_model=TriageResponse)
 def triage_ticket(request: TriageRequest) -> TriageResponse:
-    return triage(request.description)
+    try:
+        return triage(request.description)
+    except Exception:
+        logger.exception("Unhandled error while triaging ticket")
+        raise HTTPException(status_code=500, detail="Failed to triage ticket")
