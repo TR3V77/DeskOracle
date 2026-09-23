@@ -1,4 +1,4 @@
-Danny -- Rule-Based Classifier Evaluation
+DeskOracle -- Rule-Based Classifier Evaluation
 ==================================================
 
 Dataset: 2883 tickets
@@ -6,13 +6,13 @@ Overall accuracy: 98.0% (2824/2883)
 
 Per-category precision / recall / F1:
       category  precision  recall    f1  support
+      Security      1.000   0.756 0.861      242
    Network_VPN      1.000   1.000 1.000      574
 Account_Access      1.000   1.000 1.000      508
-      Hardware      0.892   1.000 0.943      485
-      Software      1.000   1.000 1.000      458
        Printer      1.000   1.000 1.000      301
          Email      1.000   1.000 1.000      315
-      Security      1.000   0.756 0.861      242
+      Hardware      0.892   1.000 0.943      485
+      Software      1.000   1.000 1.000      458
 
 Confusion matrix (rows=actual, cols=predicted):
 predicted_category  Account_Access  Email  Hardware  Network_VPN  Printer  Security  Software

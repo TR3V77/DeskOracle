@@ -1,7 +1,7 @@
 """
 Generates a static PNG dashboard of ticket volume, resolution time, and
 satisfaction trends from the synthetic dataset -- the kind of exploratory
-analysis a helpdesk analytics rotation would produce to spot operational
+analysis a helpdesk analytics team would produce to spot operational
 patterns (e.g. Monday VPN spikes, slow hardware turnaround).
 
 Run: python analytics/dashboard.py
@@ -25,7 +25,7 @@ def load_data() -> pd.DataFrame:
 
 def build_dashboard(df: pd.DataFrame):
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-    fig.suptitle("Danny -- IT Helpdesk Analytics Dashboard", fontsize=16, fontweight="bold")
+    fig.suptitle("DeskOracle -- IT Helpdesk Analytics Dashboard", fontsize=16, fontweight="bold")
 
     # 1. Daily ticket volume over time
     daily_volume = df.groupby("date").size()

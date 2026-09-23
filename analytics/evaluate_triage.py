@@ -18,12 +18,8 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from backend.categories import CATEGORIES
 from backend.triage import _fallback_classify
-
-CATEGORIES = [
-    "Network_VPN", "Account_Access", "Hardware", "Software",
-    "Printer", "Email", "Security",
-]
 
 
 def evaluate():
@@ -59,7 +55,7 @@ def evaluate():
 
     report_path = Path(__file__).resolve().parent / "evaluation_report.txt"
     with open(report_path, "w", encoding="utf-8") as f:
-        f.write("Danny -- Rule-Based Classifier Evaluation\n")
+        f.write("DeskOracle -- Rule-Based Classifier Evaluation\n")
         f.write("=" * 50 + "\n\n")
         f.write(f"Dataset: {total} tickets\n")
         f.write(f"Overall accuracy: {accuracy:.1%} ({correct}/{total})\n\n")
@@ -87,7 +83,7 @@ def _plot_confusion(confusion: pd.DataFrame):
     ax.set_yticklabels(confusion.index)
     ax.set_xlabel("Predicted category")
     ax.set_ylabel("Actual category")
-    ax.set_title("Danny Classifier -- Confusion Matrix")
+    ax.set_title("DeskOracle Classifier -- Confusion Matrix")
 
     for i in range(confusion.shape[0]):
         for j in range(confusion.shape[1]):
