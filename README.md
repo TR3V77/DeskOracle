@@ -1,5 +1,7 @@
 # DeskOracle
 
+[![Tests](https://github.com/TR3V77/DeskOracle/actions/workflows/tests.yml/badge.svg)](https://github.com/TR3V77/DeskOracle/actions/workflows/tests.yml)
+
 An AI-assisted IT helpdesk ticket triage system: submit a plain-English
 ticket description, and it retrieves relevant internal knowledge-base
 articles (RAG), predicts a category and priority, and drafts a suggested
@@ -18,7 +20,7 @@ whether the automation actually works.
 
 | Area | What it shows |
 |---|---|
-| **Software Engineering** | FastAPI backend, RAG pipeline (TF-IDF retrieval over a markdown knowledge base), LLM agent integration (Claude) with a rule-based offline fallback so the app always runs, 19 passing pytest tests (including mocked LLM-path coverage) |
+| **Software Engineering** | FastAPI backend, RAG pipeline (TF-IDF retrieval over a markdown knowledge base), LLM agent integration (Claude) with a rule-based offline fallback so the app always runs, 22 passing pytest tests (including mocked LLM-path coverage) |
 | **Data Analytics** | A synthetic-but-realistic 2,900-ticket dataset, a classifier evaluation (98% accuracy, per-category precision/recall/F1, confusion matrix), and a 4-panel operational dashboard (volume trends, resolution time by category, weekday spikes, category mix) |
 | **Product Design** | A Streamlit UI so the triage agent is actually usable, not just an API |
 
@@ -92,3 +94,7 @@ resolution-time ranges modeled loosely on typical enterprise helpdesk patterns
 (e.g., hardware tickets take longer to resolve than password resets, Monday
 volume spikes). It's not real user data — generated so the project is
 self-contained and instantly reproducible.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
