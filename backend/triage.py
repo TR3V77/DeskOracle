@@ -14,11 +14,25 @@ Two modes:
     for free and deterministically against a known ground truth.
 """
 import json
+import logging
 import os
 import re
 
+from backend.categories import (
+    ACCOUNT_ACCESS,
+    CATEGORIES,
+    EMAIL,
+    HARDWARE,
+    NETWORK_VPN,
+    OTHER,
+    PRINTER,
+    SECURITY,
+    SOFTWARE,
+)
 from backend.models import KBMatch, TriageResponse
 from backend.rag import KnowledgeBase
+
+logger = logging.getLogger(__name__)
 
 _kb = KnowledgeBase()
 
@@ -26,18 +40,18 @@ _kb = KnowledgeBase()
 # first matching category wins, so more specific/urgent categories are
 # checked before general ones.
 _CATEGORY_KEYWORDS: dict[str, list[str]] = {
-    "Security": ["phishing", "suspicious email", "malware", "virus", "hacked",
-                 "clicked a link", "ransomware", "compromised"],
-    "Network_VPN": ["vpn", "wifi", "wi-fi", "network", "connect to the internet",
-                    "disconnect"],
-    "Account_Access": ["password", "locked out", "access", "login", "log in",
-                        "account", "permission", "provision"],
-    "Printer": ["printer", "print job", "printing", "spooler"],
-    "Email": ["email", "mailbox", "outlook", "inbox", "bounce"],
-    "Hardware": ["laptop", "battery", "screen", "monitor", "dock", "keyboard",
-                 "won't power on", "overheating", "fan"],
-    "Software": ["install", "license", "application", "software", "crash",
-                 "freeze", "update"],
+    SECURITY: ["phishing", "suspicious email", "malware", "virus", "hacked",
+               "clicked a link", "ransomware", "compromised"],
+    NETWORK_VPN: ["vpn", "wifi", "wi-fi", "network", "connect to the internet",
+                  "disconnect"],
+    ACCOUNT_ACCESS: ["password", "locked out", "access", "login", "log in",
+                      "account", "permission", "provision"],
+    PRINTER: ["printer", "print job", "printing", "spooler"],
+    EMAIL: ["email", "mailbox", "outlook", "inbox", "bounce"],
+    HARDWARE: ["laptop", "battery", "screen", "monitor", "dock", "keyboard",
+               "won't power on", "overheating", "fan"],
+    SOFTWARE: ["install", "license", "application", "software", "crash",
+               "freeze", "update"],
 }
 
 _URGENT_KEYWORDS = ["urgent", "asap", "can't work", "cannot work", "critical",
@@ -48,13 +62,13 @@ _HIGH_KEYWORDS = ["not working", "won't", "can't", "error", "failed", "blocked"]
 def _fallback_classify(description: str) -> tuple[str, str]:
     text = description.lower()
 
-    category = "Other"
+    category = OTHER
     for cat, keywords in _CATEGORY_KEYWORDS.items():
         if any(kw in text for kw in keywords):
             category = cat
             break
 
-    if category == "Security":
+    if category == SECURITY:
         priority = "Critical" if any(kw in text for kw in _URGENT_KEYWORDS) else "High"
     elif any(kw in text for kw in _URGENT_KEYWORDS):
         priority = "Critical"
@@ -94,6 +108,7 @@ def _llm_classify(description: str, kb_matches) -> dict | None:
     context = "\n\n".join(
         f"[{article.category}] {article.title}\n{article.body}" for article, _ in kb_matches
     )
+    category_options = ", ".join([*CATEGORIES, OTHER])
     prompt = f"""You are an IT helpdesk triage agent. A new ticket has come in.
 
 Ticket description: "{description}"
@@ -102,7 +117,7 @@ Relevant internal knowledge base articles:
 {context if context else "(no close match found)"}
 
 Respond with ONLY a JSON object with these exact keys:
-- "category": one of Network_VPN, Account_Access, Hardware, Software, Printer, Email, Security, Other
+- "category": one of {category_options}
 - "priority": one of Low, Medium, High, Critical
 - "suggested_response": a 2-3 sentence draft reply to the employee, citing the
   relevant KB steps if applicable.
@@ -117,9 +132,11 @@ Respond with ONLY a JSON object with these exact keys:
         text = message.content[0].text
         match = re.search(r"\{.*\}", text, re.DOTALL)
         if not match:
+            logger.warning("LLM response contained no JSON object; falling back to rule-based classifier")
             return None
         return json.loads(match.group(0))
     except Exception:
+        logger.exception("LLM classification failed; falling back to rule-based classifier")
         return None
 
 
