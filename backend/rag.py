@@ -10,6 +10,8 @@ from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from backend.categories import CATEGORIES
+
 KB_DIR = Path(__file__).resolve().parent.parent / "data" / "kb_articles"
 
 
@@ -30,6 +32,12 @@ def _parse_article(path: Path) -> KBArticle:
         if line.lower().startswith("category:"):
             category = line.split(":", 1)[1].strip()
             break
+    if category not in CATEGORIES:
+        raise ValueError(
+            f"{path.name}: 'Category: {category}' does not match any of "
+            f"backend.categories.CATEGORIES ({', '.join(CATEGORIES)}) -- "
+            f"fix the typo/rename in the article or add the category upstream."
+        )
     return KBArticle(filename=path.name, category=category, title=title, body=text)
 
 
