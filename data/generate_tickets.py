@@ -8,12 +8,31 @@ Output: data/tickets.csv
 """
 import csv
 import random
+import sys
 from datetime import datetime, timedelta
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from backend.categories import (
+    ACCOUNT_ACCESS,
+    CATEGORIES,
+    EMAIL,
+    HARDWARE,
+    NETWORK_VPN,
+    PRINTER,
+    SECURITY,
+    SOFTWARE,
+)
 
 random.seed(42)
 
-CATEGORIES = {
-    "Network_VPN": {
+# Per-category generation config (weight, description templates, priority
+# distribution, resolution-time range). Keyed by the same category names
+# backend.categories defines, so a category added here without being added
+# there (or vice versa) fails loudly instead of silently drifting.
+CATEGORY_CONFIG = {
+    NETWORK_VPN: {
         "weight": 0.20,
         "descriptions": [
             "VPN keeps disconnecting every few minutes",
@@ -25,7 +44,7 @@ CATEGORIES = {
         "priority_weights": {"Low": 0.15, "Medium": 0.45, "High": 0.30, "Critical": 0.10},
         "resolution_hours": (1, 12),
     },
-    "Account_Access": {
+    ACCOUNT_ACCESS: {
         "weight": 0.18,
         "descriptions": [
             "Locked out of my account after password expired",
@@ -37,7 +56,7 @@ CATEGORIES = {
         "priority_weights": {"Low": 0.20, "Medium": 0.50, "High": 0.25, "Critical": 0.05},
         "resolution_hours": (0.5, 6),
     },
-    "Hardware": {
+    HARDWARE: {
         "weight": 0.17,
         "descriptions": [
             "Laptop won't power on at all",
@@ -49,7 +68,7 @@ CATEGORIES = {
         "priority_weights": {"Low": 0.10, "Medium": 0.35, "High": 0.40, "Critical": 0.15},
         "resolution_hours": (4, 72),
     },
-    "Software": {
+    SOFTWARE: {
         "weight": 0.16,
         "descriptions": [
             "Need Adobe Acrobat installed for contract review",
@@ -61,7 +80,7 @@ CATEGORIES = {
         "priority_weights": {"Low": 0.30, "Medium": 0.45, "High": 0.20, "Critical": 0.05},
         "resolution_hours": (1, 24),
     },
-    "Printer": {
+    PRINTER: {
         "weight": 0.10,
         "descriptions": [
             "Printer on 3rd floor is offline",
@@ -72,7 +91,7 @@ CATEGORIES = {
         "priority_weights": {"Low": 0.45, "Medium": 0.40, "High": 0.13, "Critical": 0.02},
         "resolution_hours": (0.5, 8),
     },
-    "Email": {
+    EMAIL: {
         "weight": 0.11,
         "descriptions": [
             "Mailbox full, can't send or receive email",
@@ -83,7 +102,7 @@ CATEGORIES = {
         "priority_weights": {"Low": 0.15, "Medium": 0.45, "High": 0.32, "Critical": 0.08},
         "resolution_hours": (1, 10),
     },
-    "Security": {
+    SECURITY: {
         "weight": 0.08,
         "descriptions": [
             "Received a suspicious email asking for my password",
@@ -95,6 +114,10 @@ CATEGORIES = {
         "resolution_hours": (0.5, 6),
     },
 }
+
+assert set(CATEGORY_CONFIG) == set(CATEGORIES), (
+    "CATEGORY_CONFIG keys must match backend.categories.CATEGORIES exactly"
+)
 
 SATISFACTION_BY_PRIORITY_MISS = {
     # Rough model: tickets resolved slower than the category's median get lower CSAT.
@@ -121,8 +144,8 @@ def weighted_choice(weight_dict):
 def generate():
     rows = []
     ticket_id = 1000
-    cat_names = list(CATEGORIES.keys())
-    cat_weights = [CATEGORIES[c]["weight"] for c in cat_names]
+    cat_names = list(CATEGORY_CONFIG.keys())
+    cat_weights = [CATEGORY_CONFIG[c]["weight"] for c in cat_names]
 
     for day_offset in range(NUM_DAYS):
         date = START_DATE + timedelta(days=day_offset)
@@ -138,7 +161,7 @@ def generate():
 
         for _ in range(n_tickets):
             category = random.choices(cat_names, weights=cat_weights, k=1)[0]
-            info = CATEGORIES[category]
+            info = CATEGORY_CONFIG[category]
             description = random.choice(info["descriptions"])
             priority = weighted_choice(info["priority_weights"])
 
