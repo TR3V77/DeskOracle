@@ -69,7 +69,7 @@ def build_dashboard(df: pd.DataFrame):
     print(f"  Avg satisfaction: {df['satisfaction_score'].mean():.2f} / 5")
     monday_avg = by_weekday.get("Monday", 0)
     other_avg = by_weekday.drop("Monday").mean()
-    print(f"  Monday volume vs. other weekday avg: {monday_avg:.0f} vs {other_avg:.0f} "
+    print(f"  Monday volume vs. average of all other days: {monday_avg:.0f} vs {other_avg:.0f} "
           f"({(monday_avg / other_avg - 1):+.0%})")
 
 

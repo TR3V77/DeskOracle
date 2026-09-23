@@ -48,7 +48,7 @@ Ticket description
   misclassified as Hardware because the description mentions a device ("laptop acting
   strange") without an explicit security keyword. A real error-analysis finding, not
   a bug — the kind of gap you'd catch in a precision/recall review before shipping.
-- **Monday ticket volume is 93% higher** than the weekday average, consistent with
+- **Monday ticket volume is 93% higher** than the average of all other days of the week, consistent with
   VPN/network reconnect issues after the weekend — an actionable staffing signal.
 
 ![Operational dashboard: daily ticket volume, average resolution time by category, ticket volume by weekday, and category mix](analytics/dashboard.png)
