@@ -59,7 +59,8 @@ Ticket description
 
 ```bash
 python -m venv .venv
-source .venv/Scripts/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate       # Windows (cmd/PowerShell): .venv\Scripts\activate
+                                 # Windows (Git Bash):       source .venv/Scripts/activate
 pip install -r requirements.txt
 
 # Generate the synthetic dataset
