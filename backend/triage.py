@@ -126,10 +126,16 @@ Respond with ONLY a JSON object with these exact keys:
         client = anthropic.Anthropic(api_key=api_key)
         message = client.messages.create(
             model="claude-sonnet-5",
-            max_tokens=400,
+            max_tokens=1024,
             messages=[{"role": "user", "content": prompt}],
         )
-        text = message.content[0].text
+        # claude-sonnet-5 runs adaptive thinking by default, so content[0] may
+        # be a thinking block rather than text -- scan for the text block
+        # instead of assuming position.
+        text = next((block.text for block in message.content if block.type == "text"), None)
+        if text is None:
+            logger.warning("LLM response contained no text block; falling back to rule-based classifier")
+            return None
         match = re.search(r"\{.*\}", text, re.DOTALL)
         if not match:
             logger.warning("LLM response contained no JSON object; falling back to rule-based classifier")
